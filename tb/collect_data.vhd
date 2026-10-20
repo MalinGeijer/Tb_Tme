@@ -1,0 +1,1 @@
+-- Purpose: Collect valid input bytes into complete information blocks for the reference model during future DUT verification.

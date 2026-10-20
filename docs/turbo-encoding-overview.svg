@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="850" viewBox="0 0 1200 850" role="img" aria-labelledby="title desc">
-  <title id="title">Översikt av Turbo-kodningen</title>
-  <desc id="desc">Informationsblocket går i originalordning till kodare A och via interleavern till kodare B. Båda termineras separat. Systematiska bitar och utvalda paritetsbitar serialiseras till ett kodord.</desc>
+  <title id="title">Turbo encoding overview</title>
+  <desc id="desc">The information block feeds encoder A in its original order and encoder B through the interleaver. Each encoder is terminated separately. Systematic bits and selected parity bits are serialized into a codeword.</desc>
   <defs>
     <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto"><path d="M0 0 L10 5 L0 10 Z" fill="#334155"/></marker>
     <style>
@@ -14,61 +14,61 @@
     </style>
   </defs>
   <rect width="1200" height="850" fill="#ffffff"/>
-  <text x="40" y="48" class="heading">Så bildas ett Turbo-kodord</text>
-  <text x="40" y="80" class="body">Algoritmöversikt för projektets kodrater 1/2, 1/4 och 1/6 • ingen klock- eller DUT-modell</text>
+  <text x="40" y="48" class="heading">How a Turbo codeword is formed</text>
+  <text x="40" y="80" class="body">Algorithm overview for project code rates 1/2, 1/4 and 1/6 • no clock or DUT model</text>
 
   <rect x="40" y="220" width="210" height="115" class="box"/>
-  <text x="60" y="254" class="label">Informationsblock</text>
-  <text x="60" y="284" class="body">k bitar: u(1) … u(k)</text>
-  <text x="60" y="311" class="small">Samma block till båda vägarna</text>
+  <text x="60" y="254" class="label">Information block</text>
+  <text x="60" y="284" class="body">k bits: u(1) … u(k)</text>
+  <text x="60" y="311" class="small">Same block for both paths</text>
 
   <path d="M250 255 H280 V160 H525" class="line"/>
-  <text x="300" y="143" class="small">Originalordning: u(s)</text>
+  <text x="300" y="143" class="small">Original order: u(s)</text>
   <path d="M280 160 V115 H845 V180 H885" class="line"/>
-  <text x="480" y="105" class="small">Systematiska bitar: information + A:s fyra termineringsbitar</text>
+  <text x="480" y="105" class="small">Systematic bits: information + four termination bits from A</text>
 
   <rect x="525" y="150" width="245" height="150" class="box"/>
-  <text x="545" y="184" class="label">Komponentkodare A</text>
-  <text x="545" y="214" class="body">Rekursiv faltningskodare</text>
-  <text x="545" y="244" class="body">4 minnesbitar, 16 tillstånd</text>
-  <text x="545" y="274" class="small">Paritet: out1a, out2a, out3a</text>
+  <text x="545" y="184" class="label">Component encoder A</text>
+  <text x="545" y="214" class="body">Recursive convolutional code</text>
+  <text x="545" y="244" class="body">4 memory bits, 16 states</text>
+  <text x="545" y="274" class="small">Parity: out1a, out2a, out3a</text>
 
   <path d="M250 295 H290 V390 H325" class="line"/>
   <rect x="325" y="340" width="170" height="105" class="box"/>
   <text x="344" y="375" class="label">Interleaver</text>
   <text x="344" y="405" class="body">u(π(s))</text>
-  <text x="344" y="430" class="small">Permuterar k bitar</text>
+  <text x="344" y="430" class="small">Permutes k bits</text>
   <path d="M495 390 H525" class="line"/>
 
   <rect x="525" y="340" width="245" height="150" class="box"/>
-  <text x="545" y="374" class="label">Komponentkodare B</text>
-  <text x="545" y="404" class="body">Rekursiv faltningskodare</text>
-  <text x="545" y="434" class="body">4 minnesbitar, 16 tillstånd</text>
-  <text x="545" y="464" class="small">Använd paritet: out1b, out3b</text>
+  <text x="545" y="374" class="label">Component encoder B</text>
+  <text x="545" y="404" class="body">Recursive convolutional code</text>
+  <text x="545" y="434" class="body">4 memory bits, 16 states</text>
+  <text x="545" y="464" class="small">Used parity: out1b, out3b</text>
 
   <path d="M770 235 H885" class="line"/>
   <path d="M770 415 H820 V310 H885" class="line"/>
   <rect x="885" y="150" width="275" height="210" class="box"/>
-  <text x="905" y="192" class="label">Välj och serialisera</text>
-  <text x="905" y="228" class="body">Kodraten styr urvalet</text>
-  <text x="905" y="260" class="body">1/2: växlande A/B-paritet</text>
-  <text x="905" y="292" class="body">1/4 och 1/6: fast ordning</text>
-  <text x="905" y="330" class="small">Se utgångssekvenser nedan</text>
+  <text x="905" y="192" class="label">Select and serialize</text>
+  <text x="905" y="228" class="body">Code rate controls selection</text>
+  <text x="905" y="260" class="body">1/2: alternating A/B parity</text>
+  <text x="905" y="292" class="body">1/4 and 1/6: fixed order</text>
+  <text x="905" y="330" class="small">See output sequences below</text>
   <path d="M1020 360 V405" class="line"/>
   <rect x="885" y="410" width="275" height="80" class="box"/>
-  <text x="905" y="441" class="label">Turbo-kodord</text>
-  <text x="905" y="473" class="body">n = (k + 4) / r bitar</text>
+  <text x="905" y="441" class="label">Turbo codeword</text>
+  <text x="905" y="473" class="body">n = (k + 4) / r bits</text>
 
   <rect x="40" y="520" width="1120" height="95" rx="12" fill="#fff7ed" stroke="#c2410c"/>
-  <text x="60" y="551" class="label">Initialisering och terminering</text>
-  <text x="60" y="580" class="body">Båda kodarna startar i noll. Efter k informationssteg följer fyra steg med respektive kodares återkoppling.</text>
-  <text x="60" y="603" class="small">Då blir båda sluttillstånden noll. Termineringsstegen producerar också utdata och går inte genom interleavern.</text>
+  <text x="60" y="551" class="label">Initialization and termination</text>
+  <text x="60" y="580" class="body">Both encoders start at zero. After k information steps, each runs four steps using its own feedback.</text>
+  <text x="60" y="603" class="small">Both final states are zero. Termination steps also produce output; termination bits do not pass through the interleaver.</text>
 
-  <text x="40" y="651" class="label">Utgångssekvenser i sändningsordning</text>
-  <text x="40" y="685" class="body">1/2: (out0a, out1a) vid första steget, (out0a, out1b) vid nästa; upprepas till och med termineringen.</text>
-  <text x="40" y="717" class="body">1/4: (out0a, out2a, out3a, out1b) vid varje steg.</text>
-  <text x="40" y="749" class="body">1/6: (out0a, out1a, out2a, out3a, out1b, out3b) vid varje steg.</text>
-  <text x="40" y="785" class="small">out0a är den systematiska utgången. Övriga namngivna utgångar är paritet från kodare A respektive B.</text>
-  <text x="40" y="814" class="small">Underlag: CCSDS 131.0-B-5, Issue 5, september 2023, 6.3 g–j och figurerna 6-1–6-3.</text>
-  <text x="40" y="837" class="small">Bilden visar kodningskärnan. ASM, randomisering, bytepackning och filhantering visas inte.</text>
+  <text x="40" y="651" class="label">Output sequences in transmission order</text>
+  <text x="40" y="685" class="body">1/2: (out0a, out1a) at the first step, (out0a, out1b) at the next; repeat through termination.</text>
+  <text x="40" y="717" class="body">1/4: (out0a, out2a, out3a, out1b) at each step.</text>
+  <text x="40" y="749" class="body">1/6: (out0a, out1a, out2a, out3a, out1b, out3b) at each step.</text>
+  <text x="40" y="785" class="small">out0a is the systematic output. The other named outputs are parity from encoder A or B.</text>
+  <text x="40" y="814" class="small">Reference: CCSDS 131.0-B-5, Issue 5, September 2023, 6.3 g–j and Figures 6-1–6-3.</text>
+  <text x="40" y="837" class="small">The diagram shows the encoding core. ASM, randomization, byte packing and file handling are not shown.</text>
 </svg>

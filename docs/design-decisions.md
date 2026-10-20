@@ -79,6 +79,65 @@ avsnitt 6.3 g.
 Rekommendationen är att konfigurationen anger informationsblockets längd
 i bitar och att filinläsningen kontrollerar längden mot detta värde.
 
+## Gemensam komponentkodning och separat utgångsurval
+
+Kodare A och B ska använda samma komponentkodningsfunktion, med varsitt
+separat fyrabitstillstånd. A behandlar informationsblocket i originalordning;
+B behandlar samma block i interleaverad ordning. Båda nollinitialiseras och
+termineras separat med sin egen återkoppling.
+
+För varje steg ska funktionen beräkna nästa tillstånd och samtliga tre
+paritetsutgångar, oberoende av vald kodrat. Kodraten påverkar inte
+komponentkodarnas tillståndsutveckling. Den styr ett efterföljande urval
+och serialisering av utgångarna:
+
+| Kodrat | Utgångar i sändningsordning per steg |
+| --- | --- |
+| 1/2, udda steg | `out0a, out1a` |
+| 1/2, jämna steg | `out0a, out1b` |
+| 1/4 | `out0a, out2a, out3a, out1b` |
+| 1/6 | `out0a, out1a, out2a, out3a, out1b, out3b` |
+
+Stegnumreringen börjar på 1 och fortsätter genom samtliga `k + 4` steg,
+inklusive termineringen. `out0a` är den systematiska utgången: först
+informationsbitarna och därefter A:s fyra termineringsbitar.
+
+Alla paritetsutgångar beräknas alltså för både A och B, även när vissa
+inte används. De valda bitarna kan läggas direkt i resultatsekvensen efter
+varje steg; hela blockets oanvända paritetsbitar behöver inte lagras.
+
+Denna funktionsuppdelning är ett implementationsval. Kodarnas struktur,
+utgångsurval och ordning följer CCSDS 131.0-B-5, Issue 5, september 2023,
+avsnitt 6.3 h–j och figurerna 6-2–6-3.
+
+## Bitnumrering och byteordning
+
+Enligt CCSDS 131.0-B-5, Issue 5, september 2023, avsnitt 1.6.3 och
+figur 1-1 (sida 1-7), numreras den första överförda biten som Bit 0.
+För fält som representerar ett binärt värde är denna bit MSB. Oktetter
+följer samma konvention och oktettnumreringen börjar med 0.
+
+Projektets byteingång och byteutgång representeras som
+`std_logic_vector(7 downto 0)`. Vi använder följande mappning:
+
+| Ordning inom byten | CCSDS-bitnummer | VHDL-index |
+| --- | ---: | ---: |
+| Första, MSB | 0 | 7 |
+| Nästa | 1 | 6 |
+| … | … | … |
+| Sista, LSB | 7 | 0 |
+
+Indata behandlas bytevis i filordning och bitvis från bit 7 till bit 0
+inom varje byte. På utgången placeras den första kodade biten i den första
+utgångsbytens bit 7, nästa i bit 6 och så vidare. Efter bit 0 fortsätter
+packningen i nästa bytes bit 7.
+
+VHDL-indexeringen är ett implementationsval; standarden föreskriver inte
+`downto`. MSB-först-mappningen följer standardens konvention. De befintliga
+golden-filernas överensstämmelse med denna bitordning återstår att verifiera
+funktionellt. Interleaverns ettbaserade index enligt avsnitt 6.3 g är en
+separat indexering av informationsblockets bitar.
+
 ## Öppna frågor före implementation
 
 - Innehåller `testvectors/input/input892bytes.hex` exakt ett informationsblock
@@ -86,7 +145,8 @@ i bitar och att filinläsningen kontrollerar längden mot detta värde.
   inte granskats.
 - Ska första iterationen stödja enbart 7136 informationsbitar eller alla
   fyra blockstorlekar? Detta är ännu inte uttryckligen fastställt.
-- Vilken bitordning, bytepackning och eventuell utfyllnad använder filerna?
+- Överensstämmer golden-filernas bitordning och bytepackning med den
+  beslutade MSB-först-mappningen, och förekommer eventuell utfyllnad?
 - Innehåller golden-filerna endast Turbo-kodord eller även exempelvis ASM
   eller randomisering? Vektorernas ursprung och transformationer behöver
   dokumenteras.

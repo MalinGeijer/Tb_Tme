@@ -1,0 +1,1 @@
+-- Purpose: Compare each valid DUT output byte against the corresponding expected byte and check output lengths during future DUT verification.
