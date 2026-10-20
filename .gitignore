@@ -57,3 +57,6 @@ xsim*.str
 *~
 .DS_Store
 Thumbs.db
+# Generated verification results (retain the output directory placeholder)
+/output/*
+!/output/.gitkeep

@@ -1,1 +1,172 @@
--- Purpose: Provide shared testbench utilities for file handling, format conversion, comparison, and diagnostics.
+-- Purpose: Provide testbench hex file handling, comparison, and text diagnostics.
+library ieee;
+use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
+use std.textio.all;
+use work.turbo_types_pkg.all;
+
+package utils is
+    procedure log_message(file log_file : text; message : string);
+    procedure read_hex(path : string; variable data : out ByteVec_T;
+                       file log_file : text; variable ok : out boolean);
+    procedure write_hex(path : string; data : ByteVec_T;
+                        file log_file : text; variable ok : out boolean);
+    procedure compare_bytes(actual, golden : ByteVec_T;
+                            file log_file : text; variable passed : out boolean);
+end package;
+
+-- File utilities overview
+-- Accept whitespace-separated two-digit hex bytes, including short final lines.
+-- Reject malformed tokens and wrong lengths before encoding or comparison.
+-- Keep calculated and golden data separate; never alter either to obtain PASS.
+package body utils is
+    procedure log_message(file log_file : text; message : string) is
+        variable row : line;
+    begin
+        write(row, message);
+        writeline(log_file, row);
+    end procedure;
+
+    function hex_digit(c : character) return integer is
+    begin
+        case c is
+            when '0' to '9' => return character'pos(c) - character'pos('0');
+            when 'A' to 'F' => return character'pos(c) - character'pos('A') + 10;
+            when 'a' to 'f' => return character'pos(c) - character'pos('a') + 10;
+            when others => return -1;
+        end case;
+    end function;
+
+    procedure read_hex(path : string; variable data : out ByteVec_T;
+                       file log_file : text; variable ok : out boolean) is
+        file source : text;
+        variable status : file_open_status;
+        variable row : line;
+        variable count, digits, value, line_number : natural := 0;
+        variable digit : integer;
+        variable c : character;
+        variable valid : boolean := true;
+
+        procedure finish_token is
+        begin
+            if digits = 0 then return; end if;
+            if digits /= 2 then
+                log_message(log_file, "FAIL: Expected two hex digits per byte: " & path
+                            & " line " & integer'image(line_number));
+                valid := false;
+            elsif count >= data'length then
+                log_message(log_file, "FAIL: Too many bytes: " & path
+                            & "; expected " & integer'image(data'length));
+                valid := false;
+            else
+                -- The testbench supplies ascending byte arrays.
+                data(data'low + count) := std_ulogic_vector(to_unsigned(value, 8));
+                count := count + 1;
+            end if;
+            digits := 0;
+            value := 0;
+        end procedure;
+    begin
+        ok := false;
+        assert data'ascending report "read_hex requires ascending byte indices" severity failure;
+        file_open(status, source, path, read_mode);
+        if status /= open_ok then
+            log_message(log_file, "FAIL: Cannot open input file: " & path);
+            return;
+        end if;
+        while not endfile(source) and valid loop
+            readline(source, row);
+            line_number := line_number + 1;
+            for i in row.all'range loop
+                c := row.all(i);
+                if c = ' ' or c = character'val(9) or c = character'val(13) then
+                    finish_token;
+                else
+                    digit := hex_digit(c);
+                    if digit < 0 or digits >= 2 then
+                        log_message(log_file, "FAIL: Invalid hex token: " & path
+                                    & " line " & integer'image(line_number));
+                        valid := false;
+                    else
+                        value := value * 16 + digit;
+                        digits := digits + 1;
+                    end if;
+                end if;
+                exit when not valid;
+            end loop;
+            if valid then finish_token; end if;
+        end loop;
+        file_close(source);
+        if not valid then return; end if;
+        if count /= data'length then
+            log_message(log_file, "FAIL: Wrong byte count: " & path & "; expected "
+                        & integer'image(data'length) & ", read " & integer'image(count));
+            return;
+        end if;
+        log_message(log_file, "Read " & integer'image(count) & " bytes: " & path);
+        ok := true;
+    end procedure;
+
+    procedure write_hex(path : string; data : ByteVec_T;
+                        file log_file : text; variable ok : out boolean) is
+        file destination : text;
+        variable status : file_open_status;
+        variable row : line;
+        variable column : natural := 0;
+    begin
+        ok := false;
+        file_open(status, destination, path, write_mode);
+        if status /= open_ok then
+            log_message(log_file, "FAIL: Cannot open output file: " & path);
+            return;
+        end if;
+        for i in data'range loop
+            if column /= 0 then write(row, string'(" ")); end if;
+            write(row, to_hstring(data(i)));
+            column := column + 1;
+            if column = 16 then
+                writeline(destination, row);
+                column := 0;
+            end if;
+        end loop;
+        if column /= 0 then writeline(destination, row); end if;
+        file_close(destination);
+        ok := true;
+    end procedure;
+
+    procedure compare_bytes(actual, golden : ByteVec_T;
+                            file log_file : text; variable passed : out boolean) is
+        constant a : ByteVec_T(0 to actual'length - 1) := actual;
+        constant g : ByteVec_T(0 to golden'length - 1) := golden;
+        variable mismatches : natural := 0;
+    begin
+        passed := false;
+        if a'length /= g'length then
+            log_message(log_file, "FAIL: Calculated and golden lengths differ");
+            return;
+        end if;
+        for i in a'range loop
+            if a(i) /= g(i) then
+                if mismatches = 0 then
+                    log_message(log_file, "First mismatch: block 0, byte " & integer'image(i)
+                                & " (zero-based), calculated=" & to_hstring(a(i))
+                                & ", golden=" & to_hstring(g(i)));
+                    for bit_index in 7 downto 0 loop
+                        if a(i)(bit_index) /= g(i)(bit_index) then
+                            log_message(log_file, "First differing bit: VHDL index "
+                                & integer'image(bit_index) & ", block stream index "
+                                & integer'image(i * 8 + 7 - bit_index) & " (zero-based)");
+                            exit;
+                        end if;
+                    end loop;
+                end if;
+                mismatches := mismatches + 1;
+            end if;
+        end loop;
+        log_message(log_file, "Compared bytes: " & integer'image(a'length)
+                    & "; mismatching bytes: " & integer'image(mismatches));
+        passed := mismatches = 0;
+        if passed then log_message(log_file, "PASS");
+        else log_message(log_file, "FAIL"); end if;
+    end procedure;
+end package body;
