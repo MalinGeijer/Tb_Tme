@@ -1,0 +1,1 @@
+-- Purpose: Define testbench configuration, including coding rate, information block length, file paths, and file formats.

@@ -1,0 +1,1 @@
+-- Purpose: Independently calculate Turbo codewords, including component encoding, trellis termination, and serialization.

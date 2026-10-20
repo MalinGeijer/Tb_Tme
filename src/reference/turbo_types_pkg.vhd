@@ -1,0 +1,1 @@
+-- Purpose: Define shared data types for the behavioral Turbo Encoder reference model.

@@ -1,0 +1,1 @@
+-- Purpose: Coordinate input validation, reference encoding, result file output, and comparison against independent golden data.

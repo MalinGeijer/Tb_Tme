@@ -1,0 +1,1 @@
+-- Purpose: Calculate the Turbo interleaver permutation for supported information block lengths.
