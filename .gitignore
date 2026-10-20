@@ -1,0 +1,59 @@
+# Local assistant and cloud configuration
+/.agents/
+/.codex/
+/.aws/
+
+# Generated build and simulation directories
+/build/
+/sim/
+/work/
+/work-obj*/
+/xsim.dir/
+/.Xil/
+/INCA_libs/
+/INCA_libs.*/
+/questa_lib/
+/modelsim_lib/
+
+# GHDL compilation artifacts
+work-obj*.cf
+*.o
+*.obj
+*.ali
+
+# Waveforms and simulator databases
+*.vcd
+*.vcd.gz
+*.ghw
+*.fst
+*.wlf
+*.vpd
+*.shm/
+*.asdb
+*.acdb
+*.ucdb
+*.wdb
+*.jou
+*.pb
+
+# Questa/ModelSim and Vivado simulation artifacts
+transcript
+vsim.wlf
+vsim_stacktrace.vstf
+vish_stacktrace.vstf
+modelsim.ini
+xsim*.log
+xvhdl*.log
+xelab*.log
+xsim*.str
+
+# Logs, temporary files, and editor backups
+*.log
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
