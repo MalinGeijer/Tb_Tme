@@ -13,6 +13,7 @@ mkdir -p build/ghdl output
 ghdl -a --std=08 --workdir=build/ghdl \
     tb/config/tb_config_pkg.vhd \
     src/reference/turbo_types_pkg.vhd \
+    src/reference/turbo_constants_pkg.vhd \
     src/reference/turbo_encoder_pkg.vhd \
     src/reference/turbo_interleaver_pkg.vhd \
     src/reference/turbo_serializer_pkg.vhd \

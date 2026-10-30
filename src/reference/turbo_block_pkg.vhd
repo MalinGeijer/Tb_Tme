@@ -2,7 +2,7 @@
 library ieee;
 use ieee.std_logic_1164.all;
 use work.turbo_types_pkg.all;
-use work.tb_config_pkg.all;
+use work.turbo_constants_pkg.all;
 use work.turbo_encoder_pkg.all;
 use work.turbo_interleaver_pkg.all;
 use work.turbo_serializer_pkg.all;

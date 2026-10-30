@@ -27,6 +27,9 @@ kodningsalgoritmen implementeras. Arbetsregler finns i `AGENTS.md`.
 
 ## Kör GOLDEN-verifiering
 
+För att lyfta in enbart algoritmen utan filhantering och loggning, se
+[framework-integration.md](docs/framework-integration.md).
+
 Testbänken använder VHDL-2008 och har körts med GHDL 1.0.0 (mcode).
 Kör från projektroten:
 

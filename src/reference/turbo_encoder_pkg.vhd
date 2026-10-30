@@ -4,7 +4,7 @@ library ieee;
 use ieee.std_logic_1164.all;
 
 use work.turbo_types_pkg.all;
-use work.tb_config_pkg.all;
+use work.turbo_constants_pkg.all;
 
 package turbo_encoder_pkg is
 
